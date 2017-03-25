@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.example.locato1"
+        applicationId "com.example.locato"
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
@@ -39,6 +39,9 @@ dependencies {
 dependencies {
     compile 'com.google.android.gms:play-services-maps:+'
     compile 'com.android.support:appcompat-v7:25.+'
+}
+dependencies {
+    compile 'com.android.support.constraint:constraint-layout:+'
 }
 dependencies {
     compile 'com.android.support:multidex:1.0.1'
