@@ -7,6 +7,24 @@
     android:layout_height="match_parent"
     tools:context="com.example.locato.SignInActivity">
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100sp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginRight="45dp"
+        android:layout_centerHorizontal="true">
+
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="We don't want you to remember any new passwords. log in using your exsiting Google account."
+            android:textSize="18sp"/>
+    </RelativeLayout>
+
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
@@ -14,5 +32,6 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"/>
+
 
 </RelativeLayout>

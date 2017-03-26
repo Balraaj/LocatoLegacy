@@ -1,10 +1,13 @@
 package com.example.locato;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -29,8 +32,8 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         mGoogleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API,mGoogleSignInOptions)
                 .build();
 
         findViewById(R.id.sign_in_button).setOnClickListener(this);
@@ -56,30 +59,44 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     public void signin()
     {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        startActivityForResult(signInIntent,RC_SIGN_IN);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == RC_SIGN_IN)
+        {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
     }
-    private void handleSignInResult(GoogleSignInResult result) {
-        //Log.d(TAG, "handleSignInResult:" + result.isSuccess());
-        if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
+    private void handleSignInResult(GoogleSignInResult result)
+    {
+        if (result.isSuccess())
+        {
             GoogleSignInAccount acct = result.getSignInAccount();
-            //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-            // updateUI(true);
-        } else {
-            // Signed out, show unauthenticated UI.
-            // updateUI(false);
+
+            AddAccount addAccount = new AddAccount();
+            addAccount.execute(acct.getEmail(),acct.getDisplayName(),"0","0");
+
+            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_pref), Context.MODE_PRIVATE);
+            boolean chkSignIn = sharedPreferences.getBoolean(getString(R.string.sign_in_status),false);
+
+            if(!chkSignIn)
+            {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean(getString(R.string.sign_in_status),true);
+                editor.putString(getString(R.string.email_id),acct.getEmail());
+                editor.commit();
+            }
+            startActivity(new Intent(this,MainActivity.class));
+        }
+        else
+        {
+            Toast.makeText(this,"Not success",Toast.LENGTH_LONG).show();
         }
     }
-
 }

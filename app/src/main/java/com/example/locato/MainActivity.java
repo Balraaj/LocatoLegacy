@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -15,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -35,6 +37,15 @@ public class MainActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent)
         {
             deviceLocation = intent.getParcelableExtra("location");
+
+            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_pref), Context.MODE_PRIVATE);
+            String email = sharedPreferences.getString(getString(R.string.email_id),null);
+
+            String lat = String.valueOf(deviceLocation.getLatitude());
+            String lng = String.valueOf(deviceLocation.getLongitude());
+
+            UpdateAccount updateAccount = new UpdateAccount();
+            updateAccount.execute(email,lat,lng);
             updateGUI();
         }
     };
@@ -45,14 +56,18 @@ public class MainActivity extends AppCompatActivity
         {
             if (intent.getAction().matches(LocationManager.PROVIDERS_CHANGED_ACTION))
             {
+                TextView gpsText = (TextView)findViewById(R.id.gps_Status);
                 if(!gpsEnabled)
                 {
                     gpsEnabled = true;
+                    gpsText.setVisibility(View.INVISIBLE);
                     startMyService();
                 }
                 else
                 {
                     gpsEnabled = false;
+                    gpsText.setVisibility(View.VISIBLE);
+                    gpsText.setText("GPS : DISABLED");
                     updateGUI();
                 }
             }
@@ -62,12 +77,11 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         setGpsStatus();
         setHasPermissions();
         setContentView(R.layout.activity_main);
         m1 = this;
-
-
 
         if (!permissionsGranted)
         {
@@ -148,14 +162,15 @@ public class MainActivity extends AppCompatActivity
             longitude = deviceLocation.getLongitude();
         }
 
-        msg = "Latitude    : " + latitude;
+        msg = "         Your Location : \n\n";
+        msg += "Latitude    : " + latitude;
         msg += "\nLongitude : " + longitude;
         TextView tv = (TextView) findViewById(R.id.text_box);
         TextView gpstv = (TextView)findViewById(R.id.gps_Status);
         tv.setText(msg);
         if(gpsEnabled)
         {
-            gpstv.setText("GPS : ENABLED");
+            gpstv.setVisibility(View.INVISIBLE);
         }
         else
         {

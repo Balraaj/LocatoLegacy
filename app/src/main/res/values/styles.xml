@@ -8,4 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="Theme.Translucent.NoTitleBar" parent = "Theme.Translucent.NoTitleBar">
+
+    </style>
 </resources>

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "836287733780",
+    "project_id": "firebase-locato"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836287733780:android:089087a6bbbe0d45",
+        "android_client_info": {
+          "package_name": "com.example.locato"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "836287733780-ug52oatmj28srlr04qec45q6030pun79.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "836287733780-e1s1utt9cods2lhgk9jnqv8a3ld3d8bo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.locato",
+            "certificate_hash": "1f856cad28738f9d3b245220388b31ad24974924"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3n5NM6Npf7vbQ3XiuMSTmDkaO7cmbFmQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
