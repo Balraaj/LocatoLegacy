@@ -40,4 +40,13 @@
         android:textColorLink="@color/colorAccent"
         android:textSize="18sp"/>
 
+    <Button
+        android:id="@+id/findFriend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="31dp"
+        android:text="find " />
+
 </RelativeLayout>

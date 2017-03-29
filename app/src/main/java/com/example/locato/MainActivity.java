@@ -15,10 +15,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
     Location deviceLocation;
     MainActivity m1;
@@ -81,6 +82,8 @@ public class MainActivity extends AppCompatActivity
         setGpsStatus();
         setHasPermissions();
         setContentView(R.layout.activity_main);
+        Button mybt = (Button)findViewById(R.id.findFriend);
+        mybt.setOnClickListener(this);
         m1 = this;
 
         if (!permissionsGranted)
@@ -246,5 +249,12 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        Intent myIntent = new Intent(this,FindUserLocationActivity.class);
+        this.startActivity(myIntent);
     }
 }
