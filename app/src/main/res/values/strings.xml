@@ -3,5 +3,6 @@
     <string name="title_activity_maps">Map</string>
     <string name="sign_in_status">signInStatus</string>
     <string name="shared_pref">sharedPref</string>
-    <string name="email_id">eMail</string>
+    <string name="user_email">email</string>
+    <string name="user_name">name</string>
 </resources>

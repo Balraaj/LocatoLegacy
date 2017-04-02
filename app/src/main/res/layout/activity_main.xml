@@ -8,12 +8,13 @@
     tools:context="com.example.locato.MainActivity">
 
     <TextView
-        android:id="@+id/text_box"
+        android:id="@+id/text_m_userLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="81dp"
+        android:text="Please wait . Requesting your location"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -21,16 +22,16 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <Button
-        android:id="@+id/btn"
+        android:id="@+id/btn_m_showOnMap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="myfunc"
-        android:text="Show on Map"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
+        android:onClick="showOnMap"
+        android:text="Show on Map"/>
 
     <TextView
-        android:id="@+id/gps_Status"
+        android:id="@+id/text_m_gpsStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -41,12 +42,13 @@
         android:textSize="18sp"/>
 
     <Button
-        android:id="@+id/findFriend"
+        android:id="@+id/btn_m_findFriend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn"
+        android:layout_below="@+id/btn_m_showOnMap"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="31dp"
-        android:text="find " />
+        android:onClick="onClick"
+        android:text="find friend"/>
 
 </RelativeLayout>

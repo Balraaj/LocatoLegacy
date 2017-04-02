@@ -16,7 +16,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 {
 
     private GoogleMap mMap;
-    Location deviceLocation;
+    private double latitude = 0.0;
+    private double longitude = 0.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -28,8 +29,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        Intent myIntent = getIntent();
-        deviceLocation =myIntent.getParcelableExtra("location");
+        Intent intent = getIntent();
+        latitude = intent.getDoubleExtra("latitude",0.0);
+        longitude = intent.getDoubleExtra("longitude",0.0);
+
     }
 
 
@@ -46,11 +49,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap)
     {
         mMap = googleMap;
-        double lat = deviceLocation.getLatitude();
-        double lng = deviceLocation.getLongitude();
-
         // Add a marker in Sydney and move the camera
-        LatLng loc = new LatLng(lat, lng);
+        LatLng loc = new LatLng(latitude, longitude);
         mMap.addMarker(new MarkerOptions().position(loc).title("You are here"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f));

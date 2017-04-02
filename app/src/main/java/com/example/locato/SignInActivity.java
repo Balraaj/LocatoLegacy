@@ -51,12 +51,12 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         switch (v.getId())
         {
             case R.id.sign_in_button:
-                signin();
+                signIn();
                 break;
         }
     }
 
-    public void signin()
+    public void signIn()
     {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent,RC_SIGN_IN);
@@ -73,30 +73,38 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             handleSignInResult(result);
         }
     }
+
     private void handleSignInResult(GoogleSignInResult result)
     {
         if (result.isSuccess())
         {
             GoogleSignInAccount acct = result.getSignInAccount();
+            saveUserProfile(acct.getDisplayName(),acct.getEmail());
 
-            AddAccount addAccount = new AddAccount();
-            addAccount.execute(acct.getEmail(),acct.getDisplayName(),"0","0");
+            User.setName(acct.getDisplayName());
+            User.setEmail(acct.getEmail());
 
-            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_pref), Context.MODE_PRIVATE);
-            boolean chkSignIn = sharedPreferences.getBoolean(getString(R.string.sign_in_status),false);
+            Database database = new Database(this);
+            database.createRecord();
 
-            if(!chkSignIn)
-            {
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean(getString(R.string.sign_in_status),true);
-                editor.putString(getString(R.string.email_id),acct.getEmail());
-                editor.commit();
-            }
             startActivity(new Intent(this,MainActivity.class));
+            finish();
         }
         else
         {
             Toast.makeText(this,"Not success",Toast.LENGTH_LONG).show();
+            android.os.Process.killProcess(android.os.Process.myPid());
         }
+    }
+
+    private void saveUserProfile(String name,String email)
+    {
+        SharedPreferences sharedPreferences = getSharedPreferences("myfile",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putBoolean(getString(R.string.sign_in_status),true);
+        editor.putString(getString(R.string.user_name),name);
+        editor.putString(getString(R.string.user_email),email);
+        editor.commit();
     }
 }

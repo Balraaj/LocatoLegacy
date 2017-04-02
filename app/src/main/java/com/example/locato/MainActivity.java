@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -15,38 +14,32 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
-    Location deviceLocation;
-    MainActivity m1;
+    MainActivity mainActivity;
 
-    final int MY_PERMISSION_REQUEST_LOCATION = 1;
+    final int LOCATION_PERMISSION_REQUEST = 1;
 
-    boolean gpsEnabled = false;
-    boolean gpsRequested = false;
-    boolean serviceRunning = false;
+    boolean gpsStatus = false;
     boolean permissionsGranted = false;
-
+    boolean locationSet = false;
 
     private BroadcastReceiver receiver = new BroadcastReceiver()
     {
         @Override
         public void onReceive(Context context, Intent intent)
         {
-            deviceLocation = intent.getParcelableExtra("location");
+            Location location = intent.getParcelableExtra("location");
+            locationSet = true;
 
-            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_pref), Context.MODE_PRIVATE);
-            String email = sharedPreferences.getString(getString(R.string.email_id),null);
+            User.setLatitude(location.getLatitude());
+            User.setLongitude(location.getLongitude());
 
-            String lat = String.valueOf(deviceLocation.getLatitude());
-            String lng = String.valueOf(deviceLocation.getLongitude());
+            Database database = new Database(mainActivity);
+            database.updateLocation();
 
-            UpdateAccount updateAccount = new UpdateAccount();
-            updateAccount.execute(email,lat,lng);
             updateGUI();
         }
     };
@@ -57,77 +50,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             if (intent.getAction().matches(LocationManager.PROVIDERS_CHANGED_ACTION))
             {
-                TextView gpsText = (TextView)findViewById(R.id.gps_Status);
-                if(!gpsEnabled)
-                {
-                    gpsEnabled = true;
-                    gpsText.setVisibility(View.INVISIBLE);
-                    startMyService();
-                }
-                else
-                {
-                    gpsEnabled = false;
-                    gpsText.setVisibility(View.VISIBLE);
-                    gpsText.setText("GPS : DISABLED");
-                    updateGUI();
-                }
+                setGpsStatus();
+                updateGUI();
+                startMyService();
             }
         }
     };
 
+
+    @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
 
         setGpsStatus();
-        setHasPermissions();
+        setPermissionsGranted();
         setContentView(R.layout.activity_main);
-        Button mybt = (Button)findViewById(R.id.findFriend);
-        mybt.setOnClickListener(this);
-        m1 = this;
+        mainActivity = this;
 
         if (!permissionsGranted)
         {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQUEST_LOCATION);
-        }
-    }
-
-    public void requestGps()
-    {
-        if(!gpsRequested)
-        {
-            gpsRequested = true;
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("This app requires location services to work. please turn on Location services on next screen")
-                    .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener()
-                    {
-                        public void onClick(DialogInterface dialog, int id)
-                        {
-                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                        }
-                    });
-
-            AlertDialog alert = builder.create();
-            alert.show();
-        }
-    }
-
-    private void setGpsStatus()
-    {
-        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE );
-        gpsEnabled =  manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-    }
-
-    private void setHasPermissions()
-    {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-        {
-            permissionsGranted = true;
-        }
-        else
-        {
-            permissionsGranted = false;
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
         }
     }
 
@@ -135,10 +78,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume()
     {
         super.onResume();
-        if(!gpsEnabled)
+        setGpsStatus();
+        if(!gpsStatus)
         {
             requestGps();
         }
+
         updateGUI();
         startMyService();
         registerReceiver(receiver, new IntentFilter(MyService.LOCATION_UPDATED));
@@ -150,80 +95,103 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         super.onPause();
         unregisterReceiver(receiver);
+        unregisterReceiver(gpsReceiver);
+    }
+
+    public void requestGps()
+    {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("This app requires your location to work. please turn on Location services on next screen")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int id)
+                        {
+                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    });
+
+            AlertDialog alert = builder.create();
+            alert.show();
+
+    }
+
+    private void setGpsStatus()
+    {
+        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        gpsStatus =  manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    private void setPermissionsGranted()
+    {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        {
+            permissionsGranted = true;
+        }
+        else
+        {
+            permissionsGranted = false;
+        }
     }
 
     protected synchronized void  updateGUI()
     {
-        //Toast.makeText(this, "updateGUI called", Toast.LENGTH_SHORT).show();
-        String msg;
-        double latitude = 0.0;
-        double longitude = 0.0;
-
-        if (deviceLocation != null)
+        if(locationSet)
         {
-            latitude = deviceLocation.getLatitude();
-            longitude = deviceLocation.getLongitude();
+            String msg = "       Your Location : \n\n";
+            msg += "Latitude    : " + User.getLatitude();
+            msg += "\nLongitude : " + User.getLongitude();
+            TextView tv = (TextView) findViewById(R.id.text_m_userLocation);
+            tv.setText(msg);
         }
 
-        msg = "         Your Location : \n\n";
-        msg += "Latitude    : " + latitude;
-        msg += "\nLongitude : " + longitude;
-        TextView tv = (TextView) findViewById(R.id.text_box);
-        TextView gpstv = (TextView)findViewById(R.id.gps_Status);
-        tv.setText(msg);
-        if(gpsEnabled)
+        TextView textGpsStatus = (TextView) findViewById(R.id.text_m_gpsStatus);
+
+        if(gpsStatus)
         {
-            gpstv.setVisibility(View.INVISIBLE);
+            textGpsStatus.setVisibility(View.INVISIBLE);
         }
         else
         {
-            gpstv.setText("GPS : DISABLED");
+            textGpsStatus.setVisibility(View.VISIBLE);
+            textGpsStatus.setText("GPS IS DISABLED");
         }
+
 
     }
 
-    public void myfunc(View view)
+    public void showOnMap(View view)
     {
-        if (deviceLocation != null)
+        if (locationSet)
         {
             Intent myIntent = new Intent(this, MapsActivity.class);
-            myIntent.putExtra("location", deviceLocation);
+            myIntent.putExtra("latitude",User.getLatitude());
+            myIntent.putExtra("longitude",User.getLongitude());
             this.startActivity(myIntent);
         }
     }
-
-    /*    public void updateLocation()
-        {
-            Toast.makeText(this,"updateLocation is called",Toast.LENGTH_SHORT).show();
-            deviceLocation = locationResolver.deviceLocation;
-            updateGUI();
-        }
-    */
     public void startMyService()
     {
-        if((!serviceRunning)&&(gpsEnabled)&&(permissionsGranted))
+        if(permissionsGranted)
         {
             Intent myIntent = new Intent(this, MyService.class);
-            serviceRunning = true;
             startService(myIntent);
         }
     }
-
 
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
     {
         switch (requestCode)
         {
-            case MY_PERMISSION_REQUEST_LOCATION:
+            case LOCATION_PERMISSION_REQUEST:
             {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
                     if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
                     {
-                        setGpsStatus();
                         permissionsGranted = true;
 
-                        if(!gpsEnabled)
+                        if(gpsStatus==false)
                         {
                             requestGps();
                         }
@@ -240,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             {
                                 public void onClick(DialogInterface dialog, int id)
                                 {
-                                    m1.finish();
+                                    mainActivity.finish();
                                 }
                             });
 
@@ -254,7 +222,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v)
     {
-        Intent myIntent = new Intent(this,FindUserLocationActivity.class);
+        Intent myIntent = new Intent(this,FindFriendActivity.class);
         this.startActivity(myIntent);
     }
+
 }

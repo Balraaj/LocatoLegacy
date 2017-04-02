@@ -18,7 +18,6 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
 {
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
-    Location mDeviceLocation;
     public static final String LOCATION_UPDATED = "com.example.LOCATION_UPDATED";
 
     void buildGoogleApi()
@@ -33,8 +32,8 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
     void createLocationRequest()
     {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(3000);
-        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(10000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
@@ -66,25 +65,24 @@ public class MyService extends Service implements GoogleApiClient.ConnectionCall
         }
         catch(SecurityException e)
         {
-            mDeviceLocation = null;
+
         }
 
-    }
-
-    @Override
-    public void onLocationChanged(Location location)
-    {
-        mDeviceLocation = location;
-        Intent myIntent = new Intent();
-        myIntent.setAction(LOCATION_UPDATED);
-        myIntent.putExtra("location",mDeviceLocation);
-        sendBroadcast(myIntent);
     }
 
     @Override
     public void onConnectionSuspended(int i)
     {
 
+    }
+
+    @Override
+    public void onLocationChanged(Location location)
+    {
+        Intent myIntent = new Intent();
+        myIntent.setAction(LOCATION_UPDATED);
+        myIntent.putExtra("location",location);
+        sendBroadcast(myIntent);
     }
 
     @Override
