@@ -5,4 +5,6 @@
     <string name="shared_pref">sharedPref</string>
     <string name="user_email">email</string>
     <string name="user_name">name</string>
+    <string name="drawer_open">DrawerOpen</string>
+    <string name="drawer_close">DrawerClose</string>
 </resources>

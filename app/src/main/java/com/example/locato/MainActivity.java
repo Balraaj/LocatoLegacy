@@ -12,14 +12,20 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener
 {
     MainActivity mainActivity;
+    Toolbar toolbar;
+    DrawerLayout drawerLayout;
+    ActionBarDrawerToggle actionBarDrawerToggle;
 
     final int LOCATION_PERMISSION_REQUEST = 1;
 
@@ -64,16 +70,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        drawerLayout =(DrawerLayout)findViewById(R.id.drawer_layout);
+
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        setSupportActionBar(toolbar);
+
+
 
         setGpsStatus();
         setPermissionsGranted();
-        setContentView(R.layout.activity_main);
         mainActivity = this;
 
         if (!permissionsGranted)
         {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
         }
+    }
+
+    @Override
+
+    protected void onPostCreate(Bundle bundle)
+    {
+        super.onPostCreate(bundle);
+        actionBarDrawerToggle.syncState();
     }
 
     @Override
@@ -103,6 +125,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void requestGps()
     {
+        if(!gpsRequested)
+        {
+            gpsRequested = true;
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("This app requires your location to work. please turn on Location services on next screen")
                     .setCancelable(false)
@@ -116,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             AlertDialog alert = builder.create();
             alert.show();
-
+        }
     }
 
     private void setGpsStatus()
@@ -193,8 +218,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
                     {
                         permissionsGranted = true;
+                        setGpsStatus();
 
-                        if(gpsStatus==false)
+                        if(!gpsStatus)
                         {
                             requestGps();
                         }
