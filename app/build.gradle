@@ -5,7 +5,7 @@ android {
         release {
             keyAlias 'key0'
             keyPassword 'key@123'
-            storeFile file('C:/Users/Balraj/Keystore/mykey.jks')
+            storeFile file('/home/balraj/Keystore/mykey.jks')
             storePassword '123456'
         }
     }

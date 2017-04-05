@@ -1,5 +1,6 @@
 package com.example.locato;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final int LOCATION_PERMISSION_REQUEST = 1;
 
     boolean gpsStatus = false;
+    boolean gpsRequested = false;
     boolean permissionsGranted = false;
     boolean locationSet = false;
 
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         super.onResume();
         setGpsStatus();
-        if(!gpsStatus)
+        if((!gpsRequested)&&(!gpsStatus))
         {
             requestGps();
         }
@@ -94,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPause()
     {
         super.onPause();
+        gpsRequested = false;
         unregisterReceiver(receiver);
         unregisterReceiver(gpsReceiver);
     }
