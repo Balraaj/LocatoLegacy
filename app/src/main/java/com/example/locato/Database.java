@@ -33,4 +33,10 @@ public class Database
         databaseThread = new DatabaseThread(context);
         databaseThread.execute(DatabaseThread.GET_LOCATION,email);
     }
+
+    public void sendRequest(String friendEmail)
+    {
+        databaseThread = new DatabaseThread(context);
+        databaseThread.execute(DatabaseThread.SEND_REQUEST,friendEmail);
+    }
 }

@@ -1,6 +1,5 @@
 package com.example.locato;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -20,12 +20,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback
 {
-    MainActivity mainActivity;
-    Toolbar toolbar;
-    DrawerLayout drawerLayout;
-    ActionBarDrawerToggle actionBarDrawerToggle;
+    MainActivity thisActivity;
+    GoogleMap googleMap;
 
     final int LOCATION_PERMISSION_REQUEST = 1;
 
@@ -44,10 +49,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             User.setLatitude(location.getLatitude());
             User.setLongitude(location.getLongitude());
+            LatLng latLng = new LatLng(User.getLatitude(),User.getLongitude());
+            googleMap.addMarker(new MarkerOptions().position(latLng));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            googleMap.animateCamera(CameraUpdateFactory.zoomTo(12.0f));
 
-            Database database = new Database(mainActivity);
+            Database database = new Database(thisActivity);
             database.updateLocation();
-
             updateGUI();
         }
     };
@@ -65,24 +73,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        thisActivity = this;
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
-        drawerLayout =(DrawerLayout)findViewById(R.id.drawer_layout);
-
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close);
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        setSupportActionBar(toolbar);
-
-
-
-        setGpsStatus();
+        setupNavigationDrawer();
+        setupMap();
         setPermissionsGranted();
-        mainActivity = this;
 
         if (!permissionsGranted)
         {
@@ -90,44 +89,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-
-    protected void onPostCreate(Bundle bundle)
+    private void setupNavigationDrawer()
     {
-        super.onPostCreate(bundle);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        DrawerLayout drawerLayout =(DrawerLayout)findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close);
         actionBarDrawerToggle.syncState();
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        final NavigationView navigationView = (NavigationView)findViewById(R.id.navigation_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationBarItemsHandler(this,navigationView,drawerLayout));
+
     }
 
     @Override
     protected void onResume()
     {
         super.onResume();
-        setGpsStatus();
-        if((!gpsRequested)&&(!gpsStatus))
-        {
-            requestGps();
-        }
-
+        checkAndRequestGps();
         updateGUI();
         startMyService();
         registerReceiver(receiver, new IntentFilter(MyService.LOCATION_UPDATED));
         registerReceiver(gpsReceiver,new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
     }
 
+    protected void checkAndRequestGps()
+    {
+        setGpsStatus();
+        if((!gpsRequested)&&(!gpsStatus))
+        {
+            requestGps();
+            gpsRequested = true;
+        }
+    }
+
     @Override
     protected void onPause()
     {
         super.onPause();
-        gpsRequested = false;
         unregisterReceiver(receiver);
         unregisterReceiver(gpsReceiver);
     }
 
-    public void requestGps()
+    private void requestGps()
     {
-        if(!gpsRequested)
-        {
-            gpsRequested = true;
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("This app requires your location to work. please turn on Location services on next screen")
                     .setCancelable(false)
@@ -141,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             AlertDialog alert = builder.create();
             alert.show();
-        }
+
     }
 
     private void setGpsStatus()
@@ -188,16 +193,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void showOnMap(View view)
-    {
-        if (locationSet)
-        {
-            Intent myIntent = new Intent(this, MapsActivity.class);
-            myIntent.putExtra("latitude",User.getLatitude());
-            myIntent.putExtra("longitude",User.getLongitude());
-            this.startActivity(myIntent);
-        }
-    }
     public void startMyService()
     {
         if(permissionsGranted)
@@ -218,13 +213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
                     {
                         permissionsGranted = true;
-                        setGpsStatus();
-
-                        if(!gpsStatus)
-                        {
-                            requestGps();
-                        }
-                        startMyService();
+                        checkAndRequestGps();
                     }
                 }
 
@@ -237,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             {
                                 public void onClick(DialogInterface dialog, int id)
                                 {
-                                    mainActivity.finish();
+                                    thisActivity.finish();
                                 }
                             });
 
@@ -249,10 +238,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onClick(View v)
+    public void onMapReady(GoogleMap googleMap)
     {
-        Intent myIntent = new Intent(this,FindFriendActivity.class);
-        this.startActivity(myIntent);
+        this.googleMap = googleMap;
     }
 
+    private void setupMap()
+    {
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+    }
 }

@@ -1,15 +1,19 @@
 package com.example.locato;
 
+import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class FindFriendActivity extends AppCompatActivity implements View.OnClickListener
+/**
+ * Created by balraj on 8/4/17.
+ */
+
+public class SendRequestActivity extends AppCompatActivity
 {
-    EditText userEmail = null;
+    EditText friendEmail = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -21,16 +25,16 @@ public class FindFriendActivity extends AppCompatActivity implements View.OnClic
 
         setContentView(R.layout.activity_find_friend);
         Button submitButton = (Button)findViewById(R.id.btn_ff_submitEmail);
-        userEmail = (EditText)findViewById(R.id.text_ff_userEmail);
-        submitButton.setOnClickListener(this);
+        friendEmail = (EditText)findViewById(R.id.text_ff_userEmail);
+        submitButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Database database = new Database(getApplicationContext());
+                database.sendRequest(friendEmail.getText().toString());
+            }
+        });
 
-    }
-
-    @Override
-    public void onClick(View v)
-    {
-        String email = userEmail.getText().toString();
-        Database database = new Database(this);
-        database.getLocation(email);
     }
 }

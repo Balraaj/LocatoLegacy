@@ -31,6 +31,7 @@ public class DatabaseThread extends AsyncTask<String,Void,String>
     static final String CREATE_RECORD = "1";
     static final String UPDATE_LOCATION = "2";
     static final String GET_LOCATION = "3";
+    static final String SEND_REQUEST = "4";
 
     Context context = null;
     String operationType = null;
@@ -165,6 +166,46 @@ public class DatabaseThread extends AsyncTask<String,Void,String>
         return result;
     }
 
+    void sendRequest(String friendEmail)
+    {
+
+        String serverUrl = "http://locato.net16.net/send_request.php";
+
+        try
+        {
+            URL url = new URL(serverUrl);
+            HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setDoOutput(true);
+
+            OutputStream outputStream = httpURLConnection.getOutputStream();
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream,"UTF-8"));
+            String data_string;
+
+            data_string = URLEncoder.encode("userEmail", "UTF-8") + "=" + URLEncoder.encode(User.getEmail(), "UTF-8") + "&" +
+                    URLEncoder.encode("friendEmail", "UTF-8") + "=" + URLEncoder.encode(friendEmail, "UTF-8");
+
+
+            bufferedWriter.write(data_string);
+            bufferedWriter.flush();
+            bufferedWriter.close();
+
+            InputStream inputStream = httpURLConnection.getInputStream();
+            inputStream.close();
+
+            httpURLConnection.disconnect();
+
+        }
+        catch(MalformedURLException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected String doInBackground(String... params)
     {
@@ -181,8 +222,12 @@ public class DatabaseThread extends AsyncTask<String,Void,String>
         else if(operationType==DatabaseThread.GET_LOCATION)
         {
             String email = params[1];
-
             return getLocation(email);
+        }
+        else if(operationType==DatabaseThread.SEND_REQUEST)
+        {
+            String friendEmail = params[1];
+            sendRequest(friendEmail);
         }
 
         return null;
