@@ -7,4 +7,8 @@
     <string name="user_name">name</string>
     <string name="drawer_open">DrawerOpen</string>
     <string name="drawer_close">DrawerClose</string>
+    <string name="str_ff_enterId">Enter ID</string>
+    <string name="str_ff_textInfo">Please enter registered ID of user.</string>
+    <string name="str_ff_btn_sendRequest">Send Request</string>
+    <string name="str_si_textInfo">We don\'t want you to remember any new passwords. log in using your exsiting Google account.</string>
 </resources>

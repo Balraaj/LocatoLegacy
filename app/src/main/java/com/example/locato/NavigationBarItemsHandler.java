@@ -47,7 +47,7 @@ public class NavigationBarItemsHandler implements NavigationView.OnNavigationIte
             else if (item.getItemId() == R.id.find_friend_id)
             {
                 navigationView.setCheckedItem(R.id.find_friend_id);
-                context.startActivity(new Intent(context, FindFriendActivity.class));
+                context.startActivity(new Intent(context,CircleActivity.class));
             }
 
             else if(item.getItemId()== R.id.send_request_id)
@@ -56,6 +56,15 @@ public class NavigationBarItemsHandler implements NavigationView.OnNavigationIte
                 navigationView.setCheckedItem(R.id.send_request_id);
                 context.startActivity(new Intent(context, SendRequestActivity.class));
             }
+
+            else if(item.getItemId()==R.id.get_requests_id)
+            {
+                navigationView.setCheckedItem(R.id.get_requests_id);
+                context.startActivity(new Intent(context,RequestView.class));
+
+            }
+
+
             return false;
         }
         return false;

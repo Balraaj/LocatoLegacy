@@ -39,4 +39,28 @@ public class Database
         databaseThread = new DatabaseThread(context);
         databaseThread.execute(DatabaseThread.SEND_REQUEST,friendEmail);
     }
+
+    public void getRequests()
+    {
+        databaseThread = new DatabaseThread(context);
+        databaseThread.execute(DatabaseThread.GET_REQUESTS);
+    }
+
+    public void acceptRequest(String email)
+    {
+        databaseThread = new DatabaseThread(context);
+        databaseThread.execute(DatabaseThread.ACCEPT_REQUEST,email);
+    }
+
+    public void rejectRequest(String email)
+    {
+        databaseThread = new DatabaseThread(context);
+        databaseThread.execute(DatabaseThread.REJECT_REQUEST,email);
+    }
+
+    public void getMembers()
+    {
+        databaseThread = new DatabaseThread(context);
+        databaseThread.execute(DatabaseThread.GET_MEMBERS);
+    }
 }

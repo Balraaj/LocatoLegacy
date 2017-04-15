@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/drawer_sendRequest">
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            layout="@layout/toolbar_layout"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <Button
+                android:id="@+id/btn_sr_submitID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_ff_btn_sendRequest"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
+
+            <EditText
+                android:id="@+id/text_sr_userID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/str_ff_enterId"
+                android:inputType="textEmailAddress"
+                android:gravity="center"
+                android:layout_marginTop="53dp"
+                android:layout_below="@+id/text_sr_info"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:id="@+id/text_sr_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_ff_textInfo"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="48dp"/>
+
+
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+    <android.support.design.widget.NavigationView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:id="@+id/navigation_view_sendRequest"
+        app:menu="@menu/navigation_drawer_menu"
+        app:headerLayout="@layout/navigation_drawer_header">
+
+    </android.support.design.widget.NavigationView>
+
+</android.support.v4.widget.DrawerLayout>

@@ -36,7 +36,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 .addApi(Auth.GOOGLE_SIGN_IN_API,mGoogleSignInOptions)
                 .build();
 
-        findViewById(R.id.sign_in_button).setOnClickListener(this);
+        findViewById(R.id.btn_si_signIn).setOnClickListener(this);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     {
         switch (v.getId())
         {
-            case R.id.sign_in_button:
+            case R.id.btn_si_signIn:
                 signIn();
                 break;
         }

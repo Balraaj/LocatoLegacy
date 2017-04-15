@@ -78,11 +78,11 @@ public class FriendLocationActivity extends AppCompatActivity implements OnMapRe
     {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawerLayout =(DrawerLayout)findViewById(R.id.drawer_layout);
+        DrawerLayout drawerLayout =(DrawerLayout)findViewById(R.id.drawer_main);
         ActionBarDrawerToggle  actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close);
         actionBarDrawerToggle.syncState();
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        final NavigationView navigationView = (NavigationView)findViewById(R.id.navigation_view);
+        final NavigationView navigationView = (NavigationView)findViewById(R.id.navigation_view_requestView);
         navigationView.setNavigationItemSelectedListener(new NavigationBarItemsHandler(this,navigationView,drawerLayout));
     }
 

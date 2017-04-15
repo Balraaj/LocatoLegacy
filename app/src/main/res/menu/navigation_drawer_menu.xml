@@ -13,7 +13,7 @@
         <item
             android:id="@+id/find_friend_id"
             android:title="Find Friend"
-            android:icon="@drawable/ic_search_black_24dp">
+            android:icon="@drawable/ic_room_black_24dp">
 
         </item>
 
@@ -21,13 +21,15 @@
         <item
             android:id="@+id/send_request_id"
             android:title="Send Request"
-            android:icon="@drawable/ic_search_black_24dp">
+            android:icon="@drawable/ic_send_black_24dp">
 
         </item>
 
+
         <item
-            android:id="@+id/Share_id"
-            android:title="Share">
+            android:id="@+id/get_requests_id"
+            android:title="Check Request"
+            android:icon="@drawable/ic_people_black_24dp">
 
         </item>
 

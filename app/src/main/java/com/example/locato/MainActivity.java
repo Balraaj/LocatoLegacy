@@ -18,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -93,12 +94,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawerLayout =(DrawerLayout)findViewById(R.id.drawer_layout);
+        DrawerLayout drawerLayout =(DrawerLayout)findViewById(R.id.drawer_main);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close);
         actionBarDrawerToggle.syncState();
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        final NavigationView navigationView = (NavigationView)findViewById(R.id.navigation_view);
+        final NavigationView navigationView = (NavigationView)findViewById(R.id.navigation_view_requestView);
         navigationView.setNavigationItemSelectedListener(new NavigationBarItemsHandler(this,navigationView,drawerLayout));
+
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView name = (TextView)headerView.findViewById(R.id.text_navigationHeader_name);
+        name.setText(User.getName());
+        TextView email = (TextView)headerView.findViewById(R.id.text_navigationHeader_email);
+        email.setText(User.getEmail());
 
     }
 

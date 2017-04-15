@@ -3,7 +3,31 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
-                android:background="@drawable/drawerbackground"
-    >
+                android:background="@drawable/drawerbackground">
 
+    <TextView
+        android:id="@+id/text_navigationHeader_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="14dp"
+        android:layout_marginLeft="31dp"
+        android:layout_marginStart="31dp"
+        android:text="TextView"
+        android:textColor="@android:color/holo_orange_light"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/text_navigationHeader_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/text_navigationHeader_email"
+        android:layout_alignLeft="@+id/text_navigationHeader_email"
+        android:layout_alignStart="@+id/text_navigationHeader_email"
+        android:layout_marginBottom="16dp"
+        android:text="TextView"
+        android:textColor="@android:color/holo_orange_light"
+        android:textStyle="bold"/>
 </RelativeLayout>

@@ -28,7 +28,6 @@
             -->
         </activity>
         <activity android:name=".SendRequestActivity">
-
         </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -69,8 +68,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".FindFriendActivity"/>
         <activity android:name=".FriendLocationActivity">
+        </activity>
+        <activity android:name=".RequestView">
+        </activity>
+        <activity android:name=".CircleActivity">
+        </activity>
+        <activity android:name=".ProcessRequestActivity">
         </activity>
     </application>
 
