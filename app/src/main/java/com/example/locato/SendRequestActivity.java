@@ -40,7 +40,6 @@ public class SendRequestActivity extends AppCompatActivity
             {
                 Database database = new Database(getApplicationContext());
                 database.sendRequest(ID.getText().toString());
-                Toast.makeText(getApplicationContext(),"Request sent",Toast.LENGTH_LONG).show();
                 startMainActivity();
             }
         });

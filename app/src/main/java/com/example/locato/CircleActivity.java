@@ -57,6 +57,7 @@ public class CircleActivity extends AppCompatActivity
     private void setupNavigationDrawer()
     {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar.setTitle("Select User");
         setSupportActionBar(toolbar);
         DrawerLayout drawerLayout =(DrawerLayout)findViewById(R.id.drawer_circle);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close);

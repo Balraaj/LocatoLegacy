@@ -95,6 +95,7 @@ public class RequestView extends AppCompatActivity
     private void setupNavigationDrawer()
     {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar.setTitle("Requests");
         setSupportActionBar(toolbar);
         DrawerLayout drawerLayout =(DrawerLayout)findViewById(R.id.drawer_requestView);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close);

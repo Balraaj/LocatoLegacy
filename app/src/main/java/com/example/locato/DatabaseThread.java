@@ -40,7 +40,7 @@ public class DatabaseThread extends AsyncTask<String,Void,String>
 
 
     static final String MEMBERS_DATA_RECEIVED = "20";
-    static final String REQUESTS_DATA_RECEIVED = "21";
+    static final String REQUEST_STATUS_RECEIVED = "21";
 
     Context context = null;
     String operationType = null;
@@ -175,12 +175,60 @@ public class DatabaseThread extends AsyncTask<String,Void,String>
         return result;
     }
 
-    void sendRequest(String friendEmail)
+    String sendRequest(String friendEmail)
     {
 
         String serverUrl = "http://locato.net16.net/send_request.php";
 
+        String result = null;
+
         try
+        {
+            String jsonString;
+
+            URL url = new URL(serverUrl);
+            HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setDoInput(true);
+
+            OutputStream outputStream = httpURLConnection.getOutputStream();
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream,"UTF-8"));
+            String data_string = URLEncoder.encode("userEmail", "UTF-8") + "=" + URLEncoder.encode(User.getEmail(), "UTF-8") + "&" +
+                    URLEncoder.encode("friendEmail", "UTF-8") + "=" + URLEncoder.encode(friendEmail, "UTF-8");
+
+
+            bufferedWriter.write(data_string);
+            bufferedWriter.flush();
+            bufferedWriter.close();
+
+            InputStream inputStream = httpURLConnection.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while((jsonString = bufferedReader.readLine())!=null)
+            {
+                stringBuilder.append(jsonString);
+            }
+
+            inputStream.close();
+            bufferedReader.close();
+            httpURLConnection.disconnect();
+            result = stringBuilder.toString();
+        }
+        catch(MalformedURLException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return result;
+
+        /*try
         {
             URL url = new URL(serverUrl);
             HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
@@ -212,7 +260,7 @@ public class DatabaseThread extends AsyncTask<String,Void,String>
         catch (IOException e)
         {
             e.printStackTrace();
-        }
+        }*/
     }
 
     String getRequests()
@@ -417,7 +465,7 @@ public class DatabaseThread extends AsyncTask<String,Void,String>
         else if(operationType==DatabaseThread.SEND_REQUEST)
         {
             String friendEmail = params[1];
-            sendRequest(friendEmail);
+            return sendRequest(friendEmail);
         }
         else if(operationType==DatabaseThread.GET_REQUESTS)
         {
@@ -481,6 +529,14 @@ public class DatabaseThread extends AsyncTask<String,Void,String>
         {
             Intent myIntent = new Intent();
             myIntent.setAction(MEMBERS_DATA_RECEIVED);
+            myIntent.putExtra("result",result);
+            context.sendBroadcast(myIntent);
+        }
+
+        else if(operationType==DatabaseThread.SEND_REQUEST)
+        {
+            Intent myIntent = new Intent();
+            myIntent.setAction(REQUEST_STATUS_RECEIVED);
             myIntent.putExtra("result",result);
             context.sendBroadcast(myIntent);
         }

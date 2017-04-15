@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,6 +28,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback
 {
@@ -39,6 +44,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     boolean gpsRequested = false;
     boolean permissionsGranted = false;
     boolean locationSet = false;
+
+
+    private BroadcastReceiver requestStatusReceiver = new BroadcastReceiver()
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            String jsonString = intent.getStringExtra("result");
+            try
+            {
+                JSONObject jsonObject = new JSONObject(jsonString);
+                JSONArray jsonArray = jsonObject.getJSONArray("Result");
+
+                JSONObject jo = jsonArray.getJSONObject(0);
+                String response = jo.getString("member");
+
+                if(response.equals("NULL"))
+                {
+                    Toast.makeText(thisActivity,"Request Sent",Toast.LENGTH_LONG).show();
+                }
+                else if(response.equals("CIRCLE_MEMBER"))
+                {
+                    Toast.makeText(thisActivity,"This user is already in your circle",Toast.LENGTH_LONG).show();
+                }
+                else if(response.equals("REQUEST_MEMBER"))
+                {
+                    Toast.makeText(thisActivity,"Request is already sent to this user",Toast.LENGTH_LONG).show();
+                }
+                else if(response.equals("NOT_VALID"))
+                {
+                    Toast.makeText(thisActivity,"This is not a valid Locato ID",Toast.LENGTH_LONG).show();
+                }
+
+
+            } catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    };
 
     private BroadcastReceiver receiver = new BroadcastReceiver()
     {
@@ -119,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         startMyService();
         registerReceiver(receiver, new IntentFilter(MyService.LOCATION_UPDATED));
         registerReceiver(gpsReceiver,new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
+        registerReceiver(requestStatusReceiver,new IntentFilter(DatabaseThread.REQUEST_STATUS_RECEIVED));
     }
 
     protected void checkAndRequestGps()
@@ -137,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onPause();
         unregisterReceiver(receiver);
         unregisterReceiver(gpsReceiver);
+        unregisterReceiver(requestStatusReceiver);
     }
 
     private void requestGps()

@@ -9,25 +9,27 @@
         android:id="@+id/text_navigationHeader_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="53dp"
+        android:layout_marginStart="53dp"
+        android:text="TextView"
+        android:textColor="#FFFF00"
+        android:textSize="14sp"
+        android:textStyle="bold"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="14dp"
-        android:layout_marginLeft="31dp"
-        android:layout_marginStart="31dp"
-        android:text="TextView"
-        android:textColor="@android:color/holo_orange_light"
-        android:textStyle="bold"/>
+        android:layout_alignParentStart="true"/>
 
     <TextView
         android:id="@+id/text_navigationHeader_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="#FFFF00"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="18dp"
         android:layout_above="@+id/text_navigationHeader_email"
         android:layout_alignLeft="@+id/text_navigationHeader_email"
-        android:layout_alignStart="@+id/text_navigationHeader_email"
-        android:layout_marginBottom="16dp"
-        android:text="TextView"
-        android:textColor="@android:color/holo_orange_light"
-        android:textStyle="bold"/>
+        android:layout_alignStart="@+id/text_navigationHeader_email"/>
 </RelativeLayout>
